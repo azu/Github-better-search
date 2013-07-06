@@ -176,7 +176,6 @@
          * @param {Function} listener
          */
         function addMutationEvent(target, type, listener){
-            // 子ノードが変更されたら
             var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
             var observer = new MutationObserver(function (mutations){
                 mutations.forEach(function (mutation){
@@ -186,9 +185,9 @@
                 });
             });
             observer.observe(target, {
-                attributes: false,
-                childList: true,
-                characterData: false
+                attributes: type === MutationEventType.attributes,
+                childList: type === MutationEventType.childList,
+                characterData: type === MutationEventType.characterData
             });
         }
 
