@@ -5,7 +5,6 @@
 // @version 1.0
 // @description Enhance Github Search
 // @include https://github.com/*
-// @exclude http://twicli.neocat.jp/twicli.html
 // @require https://gist.github.com/yoko/648950/raw/5eefb998f63948b7baad776421a76eceedf853d3/dispatcher.js
 // @run-at  document-end
 // ==/UserScript==
@@ -15,18 +14,7 @@
         onSearch: function (){
 
         },
-        onRepo: function (){
-            var searchForm = util.selector("#js-command-bar-field");
-
-            searchForm.addEventListener("keypress", function (evt){
-                if (isShiftEnter(evt)) {
-                    evt.preventDefault();
-                    var input = util.querySelector("#js-command-bar-field");
-                    var searchWord = input.value;
-                    Github.searchInRepository(searchWord);
-                }
-            });
-
+        onRepository: function (){
             Github.selectRadioBox(Github.selectRadioType.global);
         },
 
@@ -146,7 +134,7 @@
 
         dispatcher
             .connect(/^\/search/, URLHandler.onSearch)
-            .connect(/^\/.*?\//, URLHandler.onRepo)
+            .connect(/^\/.*?\//, URLHandler.onRepository)
             .connect(/^\/.*?/, URLHandler.onOther)
             .dispatch();
 
