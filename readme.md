@@ -1,7 +1,7 @@
 # Github-better-search
 
 * Greasemonkey
-* enhance Github search
+* Enhance Github search
 
 ## Contributing
 
