@@ -3,6 +3,11 @@
 * Greasemonkey
 * Enhance Github search
 
+## Feature
+
+* Default search type is ``All repositories`` in repogitory
+* Continue language option in search page
+
 ## Contributing
 
 1. Fork it!
