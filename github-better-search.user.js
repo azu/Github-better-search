@@ -10,10 +10,14 @@
 // @run-at  document-end
 // ==/UserScript==
 (function (){
-
     var URLHandler = {
         onSearch: function (){
             Github.insertCurrentLanguage();
+            // 子ノードが変更されたら
+            var observerTarget = util.selector("#container");
+            util.addMutationEvent(observerTarget, "childList", function (mutationEvent){
+                Github.insertCurrentLanguage();
+            });
         },
         onRepository: function (){
             Github.selectRadioBox(Github.selectRadioType.global);
@@ -100,11 +104,16 @@
                 return;
             }
             var searchForm = util.selector("#search_form");
-            var hiddenLang = document.createElement("input");
-            hiddenLang.name = "l";
-            hiddenLang.type = "hidden";
+            var id = "GM_Github_Better_Search_Lang";
+            var hiddenLang = document.getElementById(id);
+            if (hiddenLang == null) {
+                hiddenLang = document.createElement("input");
+                hiddenLang.name = "l";
+                hiddenLang.id = id;
+                hiddenLang.type = "hidden";
+                searchForm.appendChild(hiddenLang);
+            }
             hiddenLang.value = currentLang;
-            searchForm.appendChild(hiddenLang);
         }
 
         function insertCurrentLanguage(){
@@ -149,11 +158,46 @@
             throw error;
         }
 
+        /**
+         * MutationObserverInit
+         * @type {{attributes: string, childList: string, characterData: string}}
+         * @see http://dom.spec.whatwg.org/#mutationobserverinit
+         */
+        var MutationEventType = {
+            "attributes": "attributes",
+            "childList": "childList",
+            "characterData": "characterData"
+        };
+
+        /**
+         * simple mutaionevent wrapper
+         * @param {Node} target
+         * @param {MutationEventType} type
+         * @param {Function} listener
+         */
+        function addMutationEvent(target, type, listener){
+            // 子ノードが変更されたら
+            var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+            var observer = new MutationObserver(function (mutations){
+                mutations.forEach(function (mutation){
+                    if (mutation.type === type) {
+                        listener(mutation);
+                    }
+                });
+            });
+            observer.observe(target, {
+                attributes: false,
+                childList: true,
+                characterData: false
+            });
+        }
+
         return {
             selector: selector,
             selectorAll: selectorAll,
-            throwError: throwError
-        }
+            throwError: throwError,
+            addMutationEvent: addMutationEvent
+        };
     })();
 
     (function main(){
