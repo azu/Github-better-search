@@ -6,13 +6,14 @@
 // @description Enhance Github Search
 // @include https://github.com/*
 // @require https://gist.github.com/yoko/648950/raw/5eefb998f63948b7baad776421a76eceedf853d3/dispatcher.js
+// @require https://raw.github.com/allmarkedup/purl/master/purl.js
 // @run-at  document-end
 // ==/UserScript==
 (function (){
 
     var URLHandler = {
         onSearch: function (){
-
+            Github.insertCurrentLanguage();
         },
         onRepository: function (){
             Github.selectRadioBox(Github.selectRadioType.global);
@@ -24,6 +25,7 @@
     };
 
     var Github = (function (){
+
         /**
          * Github Search の検索オプション
          * @type {{repository: string, global: string}}
@@ -89,7 +91,29 @@
             return info;
         }
 
+        function getSearchLanguage(){
+            return purl(location.href).param("l");
+        }
+
+        function insertHiddenLang(currentLang){
+            if (currentLang == null) {
+                return;
+            }
+            var searchForm = util.selector("#search_form");
+            var hiddenLang = document.createElement("input");
+            hiddenLang.name = "l";
+            hiddenLang.type = "hidden";
+            hiddenLang.value = currentLang;
+            searchForm.appendChild(hiddenLang);
+        }
+
+        function insertCurrentLanguage(){
+            var currentLang = getSearchLanguage();
+            insertHiddenLang(currentLang);
+        }
+
         return {
+            insertCurrentLanguage: insertCurrentLanguage,
             selectRadioType: selectRadioType,
             selectRadioBox: selectRadioBox,
             searchInPublic: searchInPublic,
