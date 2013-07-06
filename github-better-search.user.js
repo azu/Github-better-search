@@ -143,7 +143,9 @@
          * @param {Error} error
          */
         function throwError(error){
-            GM_notification(error.message, GM_getMetadata("name") + " is Error");
+            if (typeof GM_notification !== "undefined") {
+                GM_notification(error.message, GM_getMetadata("name") + " is Error");
+            }
             throw error;
         }
 
@@ -155,7 +157,6 @@
     })();
 
     (function main(){
-
         dispatcher
             .connect(/^\/search/, URLHandler.onSearch)
             .connect(/^\/.*?\//, URLHandler.onRepository)
