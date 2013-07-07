@@ -86,7 +86,7 @@
         };
 
         /**
-         *
+         * Repository DOM info
          * @param {repositoryInfoType} infoType
          */
         function getRepositoryInfo(infoType){
