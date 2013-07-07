@@ -5,20 +5,22 @@
 // @version 1.0
 // @description Enhance Github Search
 // @include https://github.com/*
-// @require https://gist.github.com/yoko/648950/raw/5eefb998f63948b7baad776421a76eceedf853d3/dispatcher.js
-// @require https://raw.github.com/allmarkedup/purl/master/purl.js
+// @require https://raw.github.com/azu/Github-better-search/master/dispatcher.js
+// @require https://raw.github.com/azu/Github-better-search/master/purl.js
 // @run-at  document-end
 // ==/UserScript==
 (function (){
     var URLHandler = {
         onSearch: function (){
             Github.insertCurrentLanguage();
+            // 検索画面はpjax的なので読み終わったらもう一度付け直す
             // 子ノードが変更されたら
             var observerTarget = util.selector("#container");
             util.addMutationEvent(observerTarget, "childList", function (mutationEvent){
                 Github.insertCurrentLanguage();
             });
         },
+
         onRepository: function (){
             Github.selectRadioBox(Github.selectRadioType.global);
         },
@@ -41,7 +43,7 @@
 
         /**
          * 検索オプションの選択をする
-         * @param {selectRadioType} radioType
+         * @param {selectRadioType|String} radioType
          */
         function selectRadioBox(radioType){
             var searchTarget = document.getElementsByName("search_target");
@@ -170,9 +172,9 @@
         };
 
         /**
-         * simple mutaionevent wrapper
+         * simple MutationObserver wrapper
          * @param {Node} target
-         * @param {MutationEventType} type
+         * @param {MutationEventType|String} type
          * @param {Function} listener
          */
         function addMutationEvent(target, type, listener){
